@@ -14,7 +14,7 @@ def zkRemoveJobDir(zk, job_name):
   zk.delete("/napper/%s" % (job_name), recursive=True)
 
 def zkRegisterWorker(zk, job_name, hostname, port):
-  zk.create("/napper/%s/%s-%d" % (job_name, hostname, port), "%d" % (port))
+  zk.create("/napper/%s/%s:%d" % (job_name, hostname, port), "%d" % (port))
 
 logging.basicConfig()
 
@@ -42,7 +42,7 @@ while not done:
     for c in children:
       data, stat = client.get("/napper/%s/%s" % (job_name, c))
       print "%s:%s" % (c, data)
-      hosts.append("%s:%s" % (c, data))
+      hosts.append("%s" % (c))
     done = True
   time.sleep(1)
 
