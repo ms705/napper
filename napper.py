@@ -26,7 +26,7 @@ hostport = sys.argv[1]
 job_name = sys.argv[2]
 worker_id = int(sys.argv[3])
 num_workers = int(sys.argv[4])
-naiad_path = sys.argv[5]
+naiad_path = " ".join(sys.argv[5:])
 
 client = zkConnect(hostport)
 zkCreateJobDir(client, job_name)
