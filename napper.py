@@ -14,6 +14,7 @@ def zkRemoveJobDir(zk, job_name):
   zk.delete("/napper/%s" % (job_name), recursive=True)
 
 def zkRegisterWorker(zk, job_name, hostname, port):
+  print "Registering myself as %s on %s:%d" % (job_name, hostname, port)
   zk.create("/napper/%s/%s:%d" % (job_name, hostname, port), "%d" % (port))
 
 logging.basicConfig()
