@@ -14,7 +14,7 @@ def zkRemoveJobDir(zk, job_name):
   zk.delete("/napper/%s" % (job_name), recursive=True)
 
 def zkRegisterWorker(zk, job_name, hostname, port):
-  zk.create("/napper/%s/%s" % (job_name, hostname), "%d" % (port))
+  zk.create("/napper/%s/%s-%d" % (job_name, hostname, port), "%d" % (port))
 
 logging.basicConfig()
 
@@ -31,7 +31,7 @@ naiad_path = " ".join(sys.argv[5:])
 client = zkConnect(hostport)
 zkCreateJobDir(client, job_name)
 
-zkRegisterWorker(client, job_name, socket.gethostname(), 2101)
+zkRegisterWorker(client, job_name, socket.gethostname(), 2100 + worker_id)
 
 done = False
 hosts = []
