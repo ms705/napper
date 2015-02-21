@@ -1,5 +1,5 @@
 import sys, socket, time, logging
-import subprocess
+import shlex, subprocess
 from kazoo.client import KazooClient
 
 def zkConnect(conn_str):
@@ -31,9 +31,10 @@ naiad_path = sys.argv[5]
 client = zkConnect(hostport)
 zkCreateJobDir(client, job_name)
 
-zkRegisterWorker(client, job_name, socket.gethostname(), 2000 + worker_id)
+zkRegisterWorker(client, job_name, socket.gethostname(), 2101)
 
 done = False
+hosts = []
 while not done:
   children = client.get_children("/napper/%s" % (job_name))
   if len(children) == num_workers:
@@ -41,6 +42,7 @@ while not done:
     for c in children:
       data, stat = client.get("/napper/%s/%s" % (job_name, c))
       print "%s:%s" % (c, data)
+      hosts.append("%s:%s" % (c, data))
     done = True
   time.sleep(1)
 
@@ -49,5 +51,7 @@ if worker_id == 0:
   print "Deleted nodes for %s" % (job_name)
 client.stop()
 # execute program
-subprocess.call(naiad_path)
+command = "mono-sgen %s -p %d -n %d -t 1 -h %s --inlineserializer" % (naiad_path, worker_id, num_workers, " ".join(hosts))
+print "RUNNING: %s" % (command)
+subprocess.call(shlex.split(command))
 sys.exit(0)
