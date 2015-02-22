@@ -13,9 +13,9 @@ def zkCreateJobDir(zk, job_name):
 def zkRemoveJobDir(zk, job_name):
   zk.delete("/napper/%s" % (job_name), recursive=True)
 
-def zkRegisterWorker(zk, job_name, hostname, port):
-  print "Registering myself as %s on %s:%d" % (job_name, hostname, port)
-  zk.create("/napper/%s/%s:%d" % (job_name, hostname, port), "%d" % (port))
+def zkRegisterWorker(zk, job_name, worker_id, hostname, port):
+  print "Registering myself as %s:%d on %s:%d" % (job_name, worker_id, hostname, port)
+  zk.create("/napper/%s/%d" % (job_name, worker_id), "%s:%d" % (hostname, port))
 
 logging.basicConfig()
 
@@ -32,7 +32,7 @@ naiad_path = " ".join(sys.argv[5:])
 client = zkConnect(hostport)
 zkCreateJobDir(client, job_name)
 
-zkRegisterWorker(client, job_name, socket.gethostname(), 2100 + worker_id)
+zkRegisterWorker(client, job_name, worker_id, socket.gethostname(), 2100 + worker_id)
 
 done = False
 hosts = []
@@ -40,10 +40,10 @@ while not done:
   children = client.get_children("/napper/%s" % (job_name))
   if len(children) == num_workers:
     print "All workers are here!"
-    for c in children:
+    for c in sorted(children):
       data, stat = client.get("/napper/%s/%s" % (job_name, c))
-      print "%s:%s" % (c, data)
-      hosts.append("%s" % (c))
+      print "%s @ %s" % (c, data)
+      hosts.append("%s" % (data))
     done = True
   time.sleep(1)
 
