@@ -40,7 +40,10 @@ while not done:
   children = client.get_children("/napper/%s" % (job_name))
   if len(children) == num_workers:
     print "All workers are here!"
-    for c in sorted(children):
+    for c in sorted(children,
+                    key=lambda item: (int(item.partition(' ')[0])
+                                      if item[0].isdigit()
+                                      else float('inf'), item)):
       data, stat = client.get("/napper/%s/%s" % (job_name, c))
       print "%s @ %s" % (c, data)
       hosts.append("%s" % (data))
