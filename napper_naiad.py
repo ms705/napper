@@ -8,19 +8,19 @@ def zkConnect(conn_str):
   return zk
 
 def zkCreateJobDir(zk, job_name):
-  zk.ensure_path("/napper/%s" % (job_name))
+  zk.ensure_path("/napper/naiad/%s" % (job_name))
 
 def zkRemoveJobDir(zk, job_name):
-  zk.delete("/napper/%s" % (job_name), recursive=True)
+  zk.delete("/napper/naiad/%s" % (job_name), recursive=True)
 
 def zkRegisterWorker(zk, job_name, hostname, port):
   print "Registering myself as %s on %s:%d" % (job_name, hostname, port)
-  zk.create("/napper/%s/%s:%d" % (job_name, hostname, port), "%d" % (port))
+  zk.create("/napper/naiad/%s/%s:%d" % (job_name, hostname, port), "%d" % (port))
 
 logging.basicConfig()
 
 if len(sys.argv) < 6:
-  print "usage: napper <Zookeeper hostname:port> <job name> <worker ID> <num workers> <executable>"
+  print "usage: napper_naiad <Zookeeper hostname:port> <job name> <worker ID> <num workers> <executable>"
   sys.exit(1)
 
 hostport = sys.argv[1]
@@ -37,11 +37,11 @@ zkRegisterWorker(client, job_name, socket.gethostname(), 2100 + worker_id)
 done = False
 hosts = []
 while not done:
-  children = client.get_children("/napper/%s" % (job_name))
+  children = client.get_children("/napper/naiad/%s" % (job_name))
   if len(children) == num_workers:
     print "All workers are here!"
     for c in children:
-      data, stat = client.get("/napper/%s/%s" % (job_name, c))
+      data, stat = client.get("/napper/naiad/%s/%s" % (job_name, c))
       print "%s:%s" % (c, data)
       hosts.append("%s" % (c))
     done = True
