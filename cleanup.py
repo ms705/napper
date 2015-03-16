@@ -7,19 +7,18 @@ def zkConnect(conn_str):
   zk.start()
   return zk
 
-def zkRemoveJobDir(zk, sys_name, job_name):
-  zk.delete("/napper/%s/%s" % (sys_name, job_name), recursive=True)
+def zkRemove(zk, path):
+  zk.delete("/napper/%s" % (path), recursive=True)
 
 logging.basicConfig()
 
 if len(sys.argv) < 2:
-  print "usage: cleanup <Zookeeper hostname:port> <system> <job name>"
+  print "usage: cleanup <Zookeeper hostname:port> <path>"
   sys.exit(1)
 
 hostport = sys.argv[1]
-sys_name = sys.argv[2]
-job_name = sys.argv[3]
+path = sys.argv[2]
 
 client = zkConnect(hostport)
-zkRemoveJobDir(client, sys_name, job_name)
+zkRemove(client, path)
 
