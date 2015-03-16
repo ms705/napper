@@ -60,7 +60,7 @@ if worker_id == 0:
   for c in children:
     data, stat = client.get("/napper/memcached/%s/%s" % (job_name, c))
     print "Unregistering %s:%s" % (c, data)
-    client.delete("/napper/memcached/%s", c)
+    client.delete("/napper/memcached/%s", c, recursive=True)
   zkRemoveJobDir(client, job_name)
   print "Deleted nodes for %s" % (job_name)
 client.stop()
