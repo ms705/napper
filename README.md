@@ -1,2 +1,2 @@
 # napper
-Naiad orchestration wrapper
+Sleepy orchestration wrapper
