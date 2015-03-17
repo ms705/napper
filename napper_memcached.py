@@ -1,6 +1,7 @@
 import sys, socket, time, logging
 import shlex, subprocess
 from kazoo.client import KazooClient
+from kazoo.exceptions import NodeExistsError
 
 def zkConnect(conn_str):
   zk = KazooClient(hosts=conn_str)
@@ -17,8 +18,8 @@ def zkRegisterWorker(zk, job_name, hostname, port):
   print "Registering myself as %s:%d" % (hostname, port)
   while zk.exists("/napper/memcached/%s:%d" % (hostname, port)):
     port += 1
-  zk.create("/napper/memcached/%s:%d" % (hostname, port), "%d" % (port))
-  zk.create("/napper/memcached/%s/%s:%d" % (job_name, hostname, port), "%d" % (port))
+  zk.create("/napper/memcached/%s:%d" % (hostname, port), "%d" % (port), ephemeral=True)
+  zk.create("/napper/memcached/%s/%s:%d" % (job_name, hostname, port), "%d" % (port), ephemeral=True)
   return port
 
 logging.basicConfig()
@@ -36,14 +37,21 @@ memcached_path = " ".join(sys.argv[5:])
 client = zkConnect(hostport)
 zkCreateJobDir(client, job_name)
 
-actual_port = zkRegisterWorker(client, job_name, socket.gethostname(), 11211)
-
 done = False
+
+while not done:
+  try:
+    actual_port = zkRegisterWorker(client, job_name, socket.gethostname(), 11211)
+    done = True
+  except NodeExistsError:
+    pass
+
 hosts = []
+done = False
 while not done:
   children = client.get_children("/napper/memcached/%s" % (job_name))
   if len(children) == num_workers:
-    print "All workers are here!"
+    print "All tasks are here!"
     for c in children:
       data, stat = client.get("/napper/memcached/%s/%s" % (job_name, c))
       print "%s:%s" % (c, data)
@@ -55,14 +63,7 @@ command = "%s -m 1024 -p %d" % (memcached_path, actual_port)
 print "RUNNING: %s" % (command)
 subprocess.call(shlex.split(command))
 
-# clean up afterwards
-if worker_id == 0:
-  for c in children:
-    data, stat = client.get("/napper/memcached/%s/%s" % (job_name, c))
-    print "Unregistering %s:%s" % (c, data)
-    client.delete("/napper/memcached/%s", c, recursive=True)
-  zkRemoveJobDir(client, job_name)
-  print "Deleted nodes for %s" % (job_name)
+# this will implicitly clean up afterwards
 client.stop()
 
 sys.exit(0)
