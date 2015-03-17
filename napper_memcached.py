@@ -25,7 +25,7 @@ def zkRegisterWorker(zk, job_name, hostname, port):
 logging.basicConfig()
 
 if len(sys.argv) < 6:
-  print "usage: napper_naiad <Zookeeper hostname:port> <job name> <worker ID> <num workers> <executable>"
+  print "usage: napper_memcached <Zookeeper hostname:port> <job name> <worker ID> <num workers> <executable>"
   sys.exit(1)
 
 hostport = sys.argv[1]
