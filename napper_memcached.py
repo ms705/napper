@@ -1,5 +1,6 @@
 import sys, socket, time, logging
 import shlex, subprocess
+import netifaces as ni
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError
 
@@ -41,7 +42,7 @@ done = False
 
 while not done:
   try:
-    actual_port = zkRegisterWorker(client, job_name, socket.gethostname(), 11211)
+    actual_port = zkRegisterWorker(client, job_name, ni.ifaddresses('p1p1')[2][0]['addr'], 11211)
     done = True
   except NodeExistsError:
     pass
