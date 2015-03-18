@@ -45,7 +45,7 @@ for c in children:
   hosts.append("%s" % (c))
 
 # execute program
-command = "%s -s %s -T 1" % (memaslap_path, ",".join(hosts))
+command = "%s -s %s" % (memaslap_path, ",".join(hosts))
 print "RUNNING: %s" % (command)
 subprocess.call(shlex.split(command))
 
