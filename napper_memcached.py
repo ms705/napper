@@ -10,7 +10,7 @@ def zkConnect(conn_str):
   return zk
 
 def zkCreateJobDir(zk, job_name):
-  zk.create("/napper/memcached/%s" % (job_name), ephemeral=True, makepath=True)
+  zk.ensure_path("/napper/memcached/%s" % (job_name))
 
 def zkRemoveJobDir(zk, job_name):
   zk.delete("/napper/memcached/%s" % (job_name), recursive=True)
