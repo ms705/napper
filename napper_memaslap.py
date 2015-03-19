@@ -44,8 +44,12 @@ for c in children:
   print "%s:%s" % (c, data)
   hosts.append("%s" % (c))
 
+# randomly select T hosts
+num_hosts = min(len(hosts), 8)
+sampled_servers = random.sample(hosts, num_hosts)
+
 # execute program
-command = "%s -s %s" % (memaslap_path, ",".join(hosts))
+command = "%s -s %s" % (memaslap_path, ",".join(sampled_servers))
 print "RUNNING: %s" % (command)
 subprocess.call(shlex.split(command))
 
