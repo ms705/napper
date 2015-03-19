@@ -62,7 +62,7 @@ client.stop()
 # fetch inputs from HDFS if necessary
 if "tpch" in job_name:
   hdfs_fetch_file("/input/part_splits%d/part%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
-  hdfs_fetch_file("/input/lineitems_splits%d/lineitem%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
+  hdfs_fetch_file("/input/lineitem_splits%d/lineitem%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
   naiad_path += " %s" % (os.environ['FLAGS_task_data_dir'])
 
 # execute program
