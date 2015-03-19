@@ -15,7 +15,11 @@ def zkRemoveJobDir(zk, job_name):
 
 def zkRegisterWorker(zk, job_name, worker_id, hostname, port):
   print "Registering myself as %s:%d on %s:%d" % (job_name, worker_id, hostname, port)
-  zk.create("/napper/naiad/%s/%d" % (job_name, worker_id), "%s:%d" % (hostname, port))
+  zk.create("/napper/naiad/%s/%d" % (job_name, worker_id), "%s:%d" % (hostname, port), ephemeral=True)
+
+def zkDeregisterWorker(zk, job_name, worker_id):
+  print "Finished; unregistering myself from %s" % (job_name)
+  zk.delete("/napper/naiad/%s/%d" % (job_name, worker_id))
 
 logging.basicConfig()
 
@@ -44,15 +48,14 @@ while not done:
                     key=lambda item: (int(item.partition(' ')[0])
                                       if item[0].isdigit()
                                       else float('inf'), item)):
-      data, stat = client.get("/napper/%s/%s" % (job_name, c))
+      data, stat = client.get("/napper/naiad/%s/%s" % (job_name, c))
       print "%s @ %s" % (c, data)
       hosts.append("%s" % (data))
     done = True
   time.sleep(1)
 
 if worker_id == 0:
-  zkRemoveJobDir(client, job_name)
-  print "Deleted nodes for %s" % (job_name)
+  zkDeregisterWorker(client, job_name, worker_id)
 client.stop()
 # execute program
 command = "mono-sgen %s -p %d -n %d -t 1 -h %s --inlineserializer" % (naiad_path, worker_id, num_workers, " ".join(hosts))
