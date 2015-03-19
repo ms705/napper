@@ -1,4 +1,4 @@
-import sys, socket, time, logging
+import sys, socket, time, logging, random
 import shlex, subprocess
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError
