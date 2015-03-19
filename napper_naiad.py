@@ -1,5 +1,6 @@
 import sys, socket, time, logging
 import shlex, subprocess
+from hdfs import *
 from kazoo.client import KazooClient
 
 def zkConnect(conn_str):
@@ -57,6 +58,13 @@ while not done:
 if worker_id == 0:
   zkDeregisterWorker(client, job_name, worker_id)
 client.stop()
+
+# fetch inputs from HDFS if necessary
+if "tpch" in job_name:
+  hdfs_fetch_file("/input/part_splits%d/part%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
+  hdfs_fetch_file("/input/lineitems_splits%d/lineitem%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
+  naiad_path += " %s" % (os.environ['FLAGS_task_data_dir'])
+
 # execute program
 command = "mono-sgen %s -p %d -n %d -t 1 -h %s --inlineserializer" % (naiad_path, worker_id, num_workers, " ".join(hosts))
 print "RUNNING: %s" % (command)
