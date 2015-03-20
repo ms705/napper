@@ -68,6 +68,14 @@ elif "netflix" in job_name:
   hdfs_fetch_file("/input/netflix_movies_splits%d/netflix_movies%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
   hdfs_fetch_file("/input/netflix_ratings_splits%d/netflix_ratings%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
   naiad_path += " netflix_ratings%d.in netflix_movies%d.in %s" % (worker_id, worker_id, os.environ['FLAGS_task_data_dir'])
+elif "pagerank" in job_name:
+  hdfs_fetch_file("/input/pagerank_livejournal_edges_splits%d/pagerank_livejournal_edges%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
+  hdfs_fetch_file("/input/pagerank_livejournal_vertices_splits%d/pagerank_livejournal_vertices%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
+  naiad_path += " livejournal %s" % (os.environ['FLAGS_task_data_dir'])
+elif "sssp" in job_name:
+  hdfs_fetch_file("/input/sssp_lj_edges_splits%d/sssp_lj_edges%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
+  hdfs_fetch_file("/input/sssp_lj_vertices_splits%d/sssp_lj_vertices%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
+  naiad_path += " lj %s" % (os.environ['FLAGS_task_data_dir'])
 else:
   print "WARNING: unknown Naiad job type; won't fetch any input data from HDFS."
 
