@@ -80,7 +80,7 @@ else:
   print "WARNING: unknown Naiad job type; won't fetch any input data from HDFS."
 
 # execute program
-command = "mono %s -p %d -n %d -t 1 -h %s --inlineserializer" % (naiad_path, worker_id, num_workers, " ".join(hosts))
+command = "mono-sgen %s -p %d -n %d -t 1 -h %s --inlineserializer" % (naiad_path, worker_id, num_workers, " ".join(hosts))
 print "RUNNING: %s" % (command)
 subprocess.call(shlex.split(command))
 sys.exit(0)
