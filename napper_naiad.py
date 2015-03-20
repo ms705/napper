@@ -67,7 +67,7 @@ if "tpch" in job_name:
 elif "netflix" in job_name:
   hdfs_fetch_file("/input/netflix_movies_splits%d/netflix_movies%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
   hdfs_fetch_file("/input/netflix_ratings_splits%d/netflix_ratings%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
-  naiad_path += " %s/netflix_ratings%d.in %s/netflix_movies%d.in 1920" % (os.environ['FLAGS_task_data_dir'], worker_id, os.environ['FLAGS_task_data_dir'], worker_id)
+  naiad_path += " netflix_ratings%d.in netflix_movies%d.in 1920 %s" % (worker_id, worker_id, os.environ['FLAGS_task_data_dir'])
 else:
   print "WARNING: unknown Naiad job type; won't fetch any input data from HDFS."
 
