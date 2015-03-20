@@ -64,6 +64,12 @@ if "tpch" in job_name:
   hdfs_fetch_file("/input/part_splits%d/part%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
   hdfs_fetch_file("/input/lineitem_splits%d/lineitem%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
   naiad_path += " %s" % (os.environ['FLAGS_task_data_dir'])
+elif "netflix" in job_name:
+  hdfs_fetch_file("/input/netflix_movies_splits%d/netflix_movies%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
+  hdfs_fetch_file("/input/netflix_ratings_splits%d/netflix_ratings%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
+  naiad_path += " %s/netflix_ratings%d.in %s/netflix_movies%d.in 1920" % (os.environ['FLAGS_task_data_dir'], worker_id, os.environ['FLAGS_task_data_dir'], worker_id)
+else
+  print "WARNING: unknown Naiad job type; won't fetch any input data from HDFS."
 
 # execute program
 command = "mono-sgen %s -p %d -n %d -t 1 -h %s --inlineserializer" % (naiad_path, worker_id, num_workers, " ".join(hosts))
