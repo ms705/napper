@@ -100,8 +100,9 @@ if ret != 0:
   print "Not cleaning up any state."
   sys.exit(ret)
 
-if worker_id == 0:
-  zkDeregisterWorker(client, job_name, worker_id)
+zkDeregisterWorker(client, job_name, worker_id)
+#if worker_id == 0:
+#  zkRemoveJobDir(client, job_name)
 client.stop()
 
 hdfs_mkdir("/output/%s" % (job_name))
