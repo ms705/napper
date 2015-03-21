@@ -1,5 +1,6 @@
 import sys, socket, time, logging
 import shlex, subprocess
+import netifaces as ni
 from hdfs import *
 from kazoo.client import KazooClient
 
@@ -37,7 +38,7 @@ naiad_path = " ".join(sys.argv[5:])
 client = zkConnect(hostport)
 zkCreateJobDir(client, job_name)
 
-zkRegisterWorker(client, job_name, worker_id, socket.gethostname(), 2100 + worker_id)
+zkRegisterWorker(client, job_name, worker_id, ni.ifaddresses('p1p1')[2][0]['addr'], 2100 + worker_id)
 
 done = False
 hosts = []
