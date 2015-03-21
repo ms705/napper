@@ -16,7 +16,7 @@ kittydar_path = " ".join(sys.argv[3:])
 hdfs_fetch_file("/input/kittys/CAT_0%d" % (worker_id), os.environ['FLAGS_task_data_dir'])
 
 # execute program
-command = "nodejs %s %s/CAT_0%d" % (kittydar_path, os.environ['FLAGS_task_data_dir'], worker_id)
+command = "nodejs %s --dir %s/CAT_0%d" % (kittydar_path, os.environ['FLAGS_task_data_dir'], worker_id)
 print "RUNNING: %s" % (command)
 subprocess.call(shlex.split(command))
 
