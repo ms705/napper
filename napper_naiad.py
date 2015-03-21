@@ -60,7 +60,7 @@ if worker_id == 0:
 client.stop()
 
 if not os.path.exists(os.environ['FLAGS_task_data_dir']):
-  os.makedirs(os.environ['FLAGS_task_data_dir']
+  os.makedirs(os.environ['FLAGS_task_data_dir'])
 
 # fetch inputs from HDFS if necessary
 if "tpch" in job_name:
