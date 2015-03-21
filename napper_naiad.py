@@ -67,10 +67,6 @@ while not done:
     done = True
   time.sleep(1)
 
-if worker_id == 0:
-  zkDeregisterWorker(client, job_name, worker_id)
-client.stop()
-
 if not os.path.exists(os.environ['FLAGS_task_data_dir']):
   os.makedirs(os.environ['FLAGS_task_data_dir'])
 
@@ -103,6 +99,10 @@ if ret != 0:
   print "ERROR: Naiad run failed!"
   print "Not cleaning up any state."
   sys.exit(ret)
+
+if worker_id == 0:
+  zkDeregisterWorker(client, job_name, worker_id)
+client.stop()
 
 hdfs_mkdir("/output/%s" % (job_name))
 if "tpch" in job_name:
