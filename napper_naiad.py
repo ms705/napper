@@ -85,7 +85,12 @@ else:
 # execute program
 command = "mono-sgen %s -p %d -n %d -t 1 -h %s --inlineserializer" % (naiad_path, worker_id, num_workers, " ".join(hosts))
 print "RUNNING: %s" % (command)
-subprocess.call(shlex.split(command))
+ret = subprocess.call(shlex.split(command))
+
+if ret != 0:
+  print "ERROR: Naiad run failed!"
+  print "Not cleaning up any state."
+  sys.exit(ret)
 
 hdfs_mkdir("/output/%s" % (job_name))
 if "tpch" in job_name:
@@ -101,7 +106,10 @@ else:
 
 print "Deleting scratch data..."
 del_command = "rm -rf %s" % (os.environ['FLAGS_task_data_dir'])
-subprocess.call(shlex.split(del_command))
+ret = subprocess.call(shlex.split(del_command))
+
+if ret != 0:
+  print "Failed to upload results onto HDFS"
 
 print "All done -- goodbye from Napper!"
 
