@@ -2,6 +2,11 @@ import sys, os
 import shlex, subprocess
 import time
 
+def hdfs_mkdir(hdfs_path):
+  print "Creating %s on HDFS..." % (hdfs_path)
+  command = "hadoop fs -mkdir -p %s" % (hdfs_path)
+  subprocess.call(shlex.split(command))
+
 def hdfs_fetch_file(hdfs_path, local_path):
   print "Getting %s..." % (hdfs_path)
   start = time.time()

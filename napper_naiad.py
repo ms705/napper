@@ -83,4 +83,17 @@ else:
 command = "mono-sgen %s -p %d -n %d -t 1 -h %s --inlineserializer" % (naiad_path, worker_id, num_workers, " ".join(hosts))
 print "RUNNING: %s" % (command)
 subprocess.call(shlex.split(command))
+
+hdfs_mkdir("/output/%s" % (job_name))
+if "tpch" in job_name:
+  hdfs_push_file("%s/avg_yearly%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
+elif "netflix" in job_name:
+  hdfs_push_file("%s/prediction%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
+elif "pagerank" in job_name:
+  hdfs_push_file("%s/pagerank%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
+elif "sssp" in job_name:
+  hdfs_push_file("%s/dij_vertices%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
+else:
+  print "WARNING: unknown Naiad job type; won't fetch any input data from HDFS."
+
 sys.exit(0)
