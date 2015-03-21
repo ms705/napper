@@ -94,22 +94,25 @@ if ret != 0:
 
 hdfs_mkdir("/output/%s" % (job_name))
 if "tpch" in job_name:
-  hdfs_push_file("%s/avg_yearly%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
+  push_ret = hdfs_push_file("%s/avg_yearly%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
 elif "netflix" in job_name:
-  hdfs_push_file("%s/prediction%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
+  push_ret = hdfs_push_file("%s/prediction%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
 elif "pagerank" in job_name:
-  hdfs_push_file("%s/pagerank%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
+  push_ret = hdfs_push_file("%s/pagerank_livejournal%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
 elif "sssp" in job_name:
-  hdfs_push_file("%s/dij_vertices%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
+  push_ret = hdfs_push_file("%s/dij_vertices%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
 else:
   print "WARNING: unknown Naiad job type; won't fetch any input data from HDFS."
 
-print "Deleting scratch data..."
-del_command = "rm -rf %s" % (os.environ['FLAGS_task_data_dir'])
-ret = subprocess.call(shlex.split(del_command))
+if push_ret != 0:
+  print "ERROR: failed to push result to HDFS! Leaving state around for inspection."
+else:
+  print "Deleting scratch data..."
+  del_command = "rm -rf %s" % (os.environ['FLAGS_task_data_dir'])
+  ret = subprocess.call(shlex.split(del_command))
 
-if ret != 0:
-  print "Failed to upload results onto HDFS"
+  if ret != 0:
+    print "Failed to delete local scratch directory"
 
 print "All done -- goodbye from Napper!"
 
