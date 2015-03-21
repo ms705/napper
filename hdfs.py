@@ -15,7 +15,7 @@ def hdfs_fetch_file(hdfs_path, local_path):
   end = time.time()
   if ret == 0:
     print "Done getting %s, took %d seconds" % (hdfs_path, end - start)
-  else
+  else:
     print "An error occurred while trying to get %s from HDFS to %s" % (hdfs_path, local_path)
   return ret
 
@@ -27,6 +27,6 @@ def hdfs_push_file(local_path, hdfs_path):
   end = time.time()
   if ret == 0:
     print "Done putting %s, took %d seconds" % (local_path, end - start)
-  else
+  else:
     print "An error occurred while trying to put %s to %s on HDFS" % (local_path, hdfs_path)
   return ret
