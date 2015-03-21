@@ -16,12 +16,16 @@ def zkRemoveJobDir(zk, job_name):
   zk.delete("/napper/naiad/%s" % (job_name), recursive=True)
 
 def zkRegisterWorker(zk, job_name, worker_id, hostname, port):
+  while zk.exists("/napper/naiad/%s:%d" % (hostname, port)):
+    port += 1
   print "Registering myself as %s:%d on %s:%d" % (job_name, worker_id, hostname, port)
+  zk.create("/napper/naiad/%s:%d" % (hostname, port), "%d" % (port), ephemeral=True)
   zk.create("/napper/naiad/%s/%d" % (job_name, worker_id), "%s:%d" % (hostname, port), ephemeral=True)
 
 def zkDeregisterWorker(zk, job_name, worker_id):
   print "Finished; unregistering myself from %s" % (job_name)
   zk.delete("/napper/naiad/%s/%d" % (job_name, worker_id))
+  zk.delete("/napper/naiad/%s:%d" % (job_name, worker_id))
 
 logging.basicConfig()
 
@@ -38,7 +42,14 @@ naiad_path = " ".join(sys.argv[5:])
 client = zkConnect(hostport)
 zkCreateJobDir(client, job_name)
 
-zkRegisterWorker(client, job_name, worker_id, ni.ifaddresses('p1p1')[2][0]['addr'], 2100 + worker_id)
+done = False
+
+while not done:
+  try:
+    zkRegisterWorker(client, job_name, worker_id, ni.ifaddresses('p1p1')[2][0]['addr'], 2100 + worker_id)
+    done = True
+  except NodeExistsError:
+    pass
 
 done = False
 hosts = []

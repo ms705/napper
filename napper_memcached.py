@@ -16,9 +16,9 @@ def zkRemoveJobDir(zk, job_name):
   zk.delete("/napper/memcached/%s" % (job_name), recursive=True)
 
 def zkRegisterWorker(zk, job_name, hostname, port):
-  print "Registering myself as %s:%d" % (hostname, port)
   while zk.exists("/napper/memcached/%s:%d" % (hostname, port)):
     port += 1
+  print "Registering myself as %s:%d" % (hostname, port)
   zk.create("/napper/memcached/%s:%d" % (hostname, port), "%d" % (port), ephemeral=True)
   zk.create("/napper/memcached/%s/%s:%d" % (job_name, hostname, port), "%d" % (port), ephemeral=True)
   return port
