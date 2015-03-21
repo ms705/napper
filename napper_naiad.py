@@ -96,4 +96,10 @@ elif "sssp" in job_name:
 else:
   print "WARNING: unknown Naiad job type; won't fetch any input data from HDFS."
 
+print "Deleting scratch data..."
+del_command = "rm -rf %s" % (os.environ['FLAGS_task_data_dir'])
+subprocess.call(shlex.split(del_command))
+
+print "All done -- goodbye from Napper!"
+
 sys.exit(0)
