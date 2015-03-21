@@ -22,10 +22,10 @@ def zkRegisterWorker(zk, job_name, worker_id, hostname, port):
   zk.create("/napper/naiad/%s:%d" % (hostname, port), "%d" % (port), ephemeral=True)
   zk.create("/napper/naiad/%s/%d" % (job_name, worker_id), "%s:%d" % (hostname, port), ephemeral=True)
 
-def zkDeregisterWorker(zk, job_name, worker_id):
+def zkDeregisterWorker(zk, job_name, worker_id, hostname, port):
   print "Finished; unregistering myself from %s" % (job_name)
   zk.delete("/napper/naiad/%s/%d" % (job_name, worker_id))
-  zk.delete("/napper/naiad/%s:%d" % (job_name, worker_id))
+  zk.delete("/napper/naiad/%s:%d" % (hostname, port))
 
 logging.basicConfig()
 
@@ -46,7 +46,7 @@ done = False
 
 while not done:
   try:
-    zkRegisterWorker(client, job_name, worker_id, ni.ifaddresses('p1p1')[2][0]['addr'], 2100 + worker_id)
+    actual_port = zkRegisterWorker(client, job_name, worker_id, ni.ifaddresses('p1p1')[2][0]['addr'], 2100 + worker_id)
     done = True
   except NodeExistsError:
     pass
@@ -100,7 +100,7 @@ if ret != 0:
   print "Not cleaning up any state."
   sys.exit(ret)
 
-zkDeregisterWorker(client, job_name, worker_id)
+zkDeregisterWorker(client, job_name, worker_id, hostname, actual_port)
 #if worker_id == 0:
 #  zkRemoveJobDir(client, job_name)
 client.stop()
