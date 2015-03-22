@@ -43,10 +43,10 @@ client = zkConnect(hostport)
 zkCreateJobDir(client, job_name)
 
 done = False
-
+hostname = ni.ifaddresses('p1p1')[2][0]['addr']
 while not done:
   try:
-    actual_port = zkRegisterWorker(client, job_name, worker_id, ni.ifaddresses('p1p1')[2][0]['addr'], 2100 + worker_id)
+    actual_port = zkRegisterWorker(client, job_name, worker_id, hostname, 2100 + worker_id)
     done = True
   except NodeExistsError:
     pass
