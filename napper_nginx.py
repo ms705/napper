@@ -1,5 +1,6 @@
-import sys, socket, time, logging
+import os, sys, socket, time, logging
 import shlex, subprocess
+import shutil
 import netifaces as ni
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError
