@@ -21,6 +21,7 @@ def zkRegisterWorker(zk, job_name, worker_id, hostname, port):
   print "Registering myself as %s:%d on %s:%d" % (job_name, worker_id, hostname, port)
   zk.create("/napper/naiad/%s:%d" % (hostname, port), "%d" % (port), ephemeral=True)
   zk.create("/napper/naiad/%s/%d" % (job_name, worker_id), "%s:%d" % (hostname, port), ephemeral=True)
+  return port
 
 def zkDeregisterWorker(zk, job_name, worker_id, hostname, port):
   print "Finished; unregistering myself from %s" % (job_name)
