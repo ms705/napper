@@ -62,7 +62,7 @@ while not done:
 
 # get config file in place
 working_dir = os.environ["FLAGS_task_data_dir"]
-os.mkdir("%s/html", working_dir)
+os.mkdir("%s/html" % (working_dir))
 shutil.copyfile("/home/srguser/firmament-experiments/workloads/nginx/nginx.conf", "%s/nginx.conf" % (working_dir))
 shutil.copyfile("/home/srguser/firmament-experiments/workloads/nginx/index.html", "%s/html/index.html" % (working_dir))
 shutil.copyfile("/home/srguser/firmament-experiments/workloads/nginx/muppet.jpg", "%s/html/muppet.jpg" % (working_dir))
