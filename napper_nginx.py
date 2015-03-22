@@ -42,7 +42,7 @@ done = False
 
 while not done:
   try:
-    actual_port = zkRegisterWorker(client, job_name, ni.ifaddresses('p1p1')[2][0]['addr'], 11211)
+    actual_port = zkRegisterWorker(client, job_name, ni.ifaddresses('p1p1')[2][0]['addr'], 8888)
     done = True
   except NodeExistsError:
     pass
