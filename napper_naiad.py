@@ -107,6 +107,7 @@ zkDeregisterWorker(client, job_name, worker_id, hostname, actual_port)
 client.stop()
 
 hdfs_mkdir("/output/%s" % (job_name))
+push_ret = 0
 if "tpch" in job_name:
   push_ret = hdfs_push_file("%s/avg_yearly%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
 elif "netflix" in job_name:
