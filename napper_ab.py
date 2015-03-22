@@ -52,7 +52,7 @@ sampled_server = random.sample(hosts, 1)
 
 # execute program
 working_dir = os.environ["FLAGS_task_data_dir"]
-command = "%s -e %s/req_cdf.csv http://%s/" % (ab_path, working_dir, sampled_server)
+command = "%s -e %s/req_cdf.csv http://%s/" % (ab_path, working_dir, sampled_server[0])
 print "RUNNING: %s" % (command)
 subprocess.call(shlex.split(command))
 
