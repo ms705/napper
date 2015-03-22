@@ -62,7 +62,7 @@ while not done:
 
 # get config file in place
 working_dir = os.environ["FLAGS_task_data_dir"]
-shutil.copyfile("/home/srguser/firmament-experiments/workloads/nginx/nginx.conf", "%s/" % (working_dir))
+shutil.copyfile("/home/srguser/firmament-experiments/workloads/nginx/nginx.conf", "%s/nginx.conf" % (working_dir))
 sed_command = "sed -i %s/nginx.conf -e 's/8020/%d/'" % (working_dir, actual_port)
 subprocess.call(shlex.split(sed_command))
 # execute program
