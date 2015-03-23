@@ -56,17 +56,20 @@ for c in children:
   print "%s:%s" % (c, data)
   hosts.append("%s" % (c))
 
-# randomly select T hosts
-if len(hosts) == 0:
-  print "No nginx servers found!"
-  sys.exit(1)
-sampled_server = random.sample(hosts, 1)
-
-# execute program
 working_dir = createLocalScratchDir()
-command = "%s -e %s/req_cdf.csv http://%s/" % (ab_path, working_dir, sampled_server[0])
-print "RUNNING: %s" % (command)
-subprocess.call(shlex.split(command))
+i = 0
+# randomly select T hosts
+while True:
+  if len(hosts) == 0:
+    print "No nginx servers found!"
+    sys.exit(1)
+  sampled_server = random.sample(hosts, 1)
+
+  # execute program
+  command = "%s -e %s/req_cdf_%d.csv http://%s/" % (ab_path, working_dir, i, sampled_server[0])
+  print "RUNNING: %s" % (command)
+  subprocess.call(shlex.split(command))
+  i += 1
 
 # this will implicitly clean up afterwards
 client.stop()
