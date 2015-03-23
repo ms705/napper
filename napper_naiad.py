@@ -71,29 +71,28 @@ while not done:
 
 if 'FLAGS_task_data_dir' in os.environ:
   task_data_dir = os.environ(['FLAGS_task_data_dir'])
+  if not os.path.exists(task_data_dir):
+    os.makedirs(task_data_dir)
 else:
   task_data_dir = tempfile.mkstemp(dir="/mnt/scratch/")
 
-if not os.path.exists(os.environ['FLAGS_task_data_dir']):
-  os.makedirs(os.environ['FLAGS_task_data_dir'])
-
 # fetch inputs from HDFS if necessary
 if "tpch" in job_name:
-  hdfs_fetch_file("/input/part_splits%d/part%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
-  hdfs_fetch_file("/input/lineitem_splits%d/lineitem%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
-  naiad_path += " %s" % (os.environ['FLAGS_task_data_dir'])
+  hdfs_fetch_file("/input/part_splits%d/part%d.in" % (num_workers, worker_id), task_data_dir)
+  hdfs_fetch_file("/input/lineitem_splits%d/lineitem%d.in" % (num_workers, worker_id), task_data_dir)
+  naiad_path += " %s" % (task_data_dir)
 elif "netflix" in job_name:
-  hdfs_fetch_file("/input/netflix_movies_splits%d/netflix_movies%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
-  hdfs_fetch_file("/input/netflix_ratings_splits%d/netflix_ratings%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
-  naiad_path += " netflix_ratings%d.in netflix_movies%d.in %s" % (worker_id, worker_id, os.environ['FLAGS_task_data_dir'])
+  hdfs_fetch_file("/input/netflix_movies_splits%d/netflix_movies%d.in" % (num_workers, worker_id), task_data_dir)
+  hdfs_fetch_file("/input/netflix_ratings_splits%d/netflix_ratings%d.in" % (num_workers, worker_id), task_data_dir)
+  naiad_path += " netflix_ratings%d.in netflix_movies%d.in %s" % (worker_id, worker_id, task_data_dir)
 elif "pagerank" in job_name:
-  hdfs_fetch_file("/input/pagerank_livejournal_edges_splits%d/pagerank_livejournal_edges%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
-  hdfs_fetch_file("/input/pagerank_livejournal_vertices_splits%d/pagerank_livejournal_vertices%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
-  naiad_path += " livejournal %s" % (os.environ['FLAGS_task_data_dir'])
+  hdfs_fetch_file("/input/pagerank_livejournal_edges_splits%d/pagerank_livejournal_edges%d.in" % (num_workers, worker_id), task_data_dir)
+  hdfs_fetch_file("/input/pagerank_livejournal_vertices_splits%d/pagerank_livejournal_vertices%d.in" % (num_workers, worker_id), task_data_dir)
+  naiad_path += " livejournal %s" % (task_data_dir)
 elif "sssp" in job_name:
-  hdfs_fetch_file("/input/sssp_tw_edges_splits%d/sssp_tw_edges%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
-  hdfs_fetch_file("/input/sssp_tw_vertices_splits%d/sssp_tw_vertices%d.in" % (num_workers, worker_id), os.environ['FLAGS_task_data_dir'])
-  naiad_path += " tw %s" % (os.environ['FLAGS_task_data_dir'])
+  hdfs_fetch_file("/input/sssp_tw_edges_splits%d/sssp_tw_edges%d.in" % (num_workers, worker_id), task_data_dir)
+  hdfs_fetch_file("/input/sssp_tw_vertices_splits%d/sssp_tw_vertices%d.in" % (num_workers, worker_id), task_data_dir)
+  naiad_path += " tw %s" % (task_data_dir)
 else:
   print "WARNING: unknown Naiad job type; won't fetch any input data from HDFS."
 
@@ -115,13 +114,13 @@ client.stop()
 hdfs_mkdir("/output/%s" % (job_name))
 push_ret = 0
 if "tpch" in job_name:
-  push_ret = hdfs_push_file("%s/avg_yearly%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
+  push_ret = hdfs_push_file("%s/avg_yearly%d.out" % (task_data_dir, worker_id), "/output/%s/" % (job_name))
 elif "netflix" in job_name:
-  push_ret = hdfs_push_file("%s/prediction%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
+  push_ret = hdfs_push_file("%s/prediction%d.out" % (task_data_dir, worker_id), "/output/%s/" % (job_name))
 elif "pagerank" in job_name:
-  push_ret = hdfs_push_file("%s/pagerank_livejournal%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
+  push_ret = hdfs_push_file("%s/pagerank_livejournal%d.out" % (task_data_dir, worker_id), "/output/%s/" % (job_name))
 elif "sssp" in job_name:
-  push_ret = hdfs_push_file("%s/dij_vertices%d.out" % (os.environ['FLAGS_task_data_dir'], worker_id), "/output/%s/" % (job_name))
+  push_ret = hdfs_push_file("%s/dij_vertices%d.out" % (task_data_dir, worker_id), "/output/%s/" % (job_name))
 else:
   print "WARNING: unknown Naiad job type; won't fetch any input data from HDFS."
 
@@ -129,7 +128,7 @@ if push_ret != 0:
   print "ERROR: failed to push result to HDFS! Leaving state around for inspection."
 else:
   print "Deleting scratch data..."
-  del_command = "rm -rf %s" % (os.environ['FLAGS_task_data_dir'])
+  del_command = "rm -rf %s" % (task_data_dir)
   ret = subprocess.call(shlex.split(del_command))
 
   if ret != 0:
