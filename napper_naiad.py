@@ -5,6 +5,17 @@ import tempfile
 from hdfs import *
 from kazoo.client import KazooClient
 
+def createLocalScratchDir():
+  if 'FLAGS_task_data_dir' in os.environ:
+    working_dir = os.environ(['FLAGS_task_data_dir'])
+    if not os.path.exists(working_dir):
+      os.makedirs(working_dir)
+  else:
+    working_dir = tempfile.mkdtemp(dir="/mnt/scratch/")
+    print "Working dir is: %s" % (working_dir)
+    os.chmod(working_dir, 0777)
+  return working_dir
+
 def zkConnect(conn_str):
   zk = KazooClient(hosts=conn_str)
   zk.start()
@@ -69,13 +80,7 @@ while not done:
     done = True
   time.sleep(1)
 
-if 'FLAGS_task_data_dir' in os.environ:
-  task_data_dir = os.environ(['FLAGS_task_data_dir'])
-  if not os.path.exists(task_data_dir):
-    os.makedirs(task_data_dir)
-else:
-  task_data_dir = tempfile.mkdtemp(dir="/mnt/scratch/")
-
+task_data_dir = createLocalScratchDir()
 # fetch inputs from HDFS if necessary
 if "tpch" in job_name:
   hdfs_fetch_file("/input/part_splits%d/part%d.in" % (num_workers, worker_id), task_data_dir)
