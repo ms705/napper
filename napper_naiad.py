@@ -74,7 +74,7 @@ if 'FLAGS_task_data_dir' in os.environ:
   if not os.path.exists(task_data_dir):
     os.makedirs(task_data_dir)
 else:
-  task_data_dir = tempfile.mkstemp(dir="/mnt/scratch/")
+  task_data_dir = tempfile.mkdtemp(dir="/mnt/scratch/")
 
 # fetch inputs from HDFS if necessary
 if "tpch" in job_name:

@@ -67,7 +67,7 @@ if 'FLAGS_task_data_dir' in os.environ:
   if not os.path.exists(working_dir):
     os.makedirs(working_dir)
 else:
-  working_dir = tempfile.mkstemp(dir="/mnt/scratch/")
+  working_dir = tempfile.mkdtemp(dir="/mnt/scratch/")
 os.mkdir("%s/html" % (working_dir))
 shutil.copyfile("/home/srguser/firmament-experiments/workloads/nginx/nginx.conf", "%s/nginx.conf" % (working_dir))
 shutil.copyfile("/home/srguser/firmament-experiments/workloads/nginx/index.html", "%s/html/index.html" % (working_dir))
