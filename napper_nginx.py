@@ -2,6 +2,7 @@ import os, sys, socket, time, logging
 import shlex, subprocess
 import shutil
 import netifaces as ni
+import tempfile
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError
 
