@@ -1,7 +1,19 @@
 import os, sys, socket, time, logging, random
 import shlex, subprocess
+import tempfile
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError
+
+def createLocalScratchDir():
+  if 'FLAGS_task_data_dir' in os.environ:
+    working_dir = os.environ(['FLAGS_task_data_dir'])
+    if not os.path.exists(working_dir):
+      os.makedirs(working_dir)
+  else:
+    working_dir = tempfile.mkdtemp(dir="/mnt/scratch/")
+    print "Working dir is: %s" % (working_dir)
+    os.chmod(working_dir, 0777)
+  return working_dir
 
 def zkConnect(conn_str):
   zk = KazooClient(hosts=conn_str)
@@ -51,7 +63,7 @@ if len(hosts) == 0:
 sampled_server = random.sample(hosts, 1)
 
 # execute program
-working_dir = os.environ["FLAGS_task_data_dir"]
+working_dir = createLocalScratchDir()
 command = "%s -e %s/req_cdf.csv http://%s/" % (ab_path, working_dir, sampled_server[0])
 print "RUNNING: %s" % (command)
 subprocess.call(shlex.split(command))

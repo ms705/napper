@@ -17,7 +17,6 @@ def createLocalScratchDir():
     os.chmod(working_dir, 0777)
   return working_dir
 
-
 def zkConnect(conn_str):
   zk = KazooClient(hosts=conn_str)
   zk.start()
