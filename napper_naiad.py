@@ -101,6 +101,7 @@ elif "sssp" in job_name:
 elif "join" in job_name:
   hdfs_fetch_file("/input/join_right_splits%d/join_right%d.in" % (num_workers, worker_id), task_data_dir)
   hdfs_fetch_file("/input/join_left_splits%d/join_left%d.in" % (num_workers, worker_id), task_data_dir)
+  naiad_path += " %s" % (task_data_dir)
 else:
   print "WARNING: unknown Naiad job type; won't fetch any input data from HDFS."
 
