@@ -1,6 +1,7 @@
 import sys, socket, time, logging
 import shlex, subprocess
 import netifaces as ni
+import tempfile
 from hdfs import *
 from kazoo.client import KazooClient
 
@@ -67,6 +68,11 @@ while not done:
       hosts.append("%s" % (data))
     done = True
   time.sleep(1)
+
+if 'FLAGS_task_data_dir' in os.environ:
+  task_data_dir = os.environ(['FLAGS_task_data_dir'])
+else:
+  task_data_dir = tempfile.mkstemp(dir="/mnt/scratch/")
 
 if not os.path.exists(os.environ['FLAGS_task_data_dir']):
   os.makedirs(os.environ['FLAGS_task_data_dir'])
