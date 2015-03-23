@@ -4,7 +4,7 @@ from hdfs import *
 
 def createLocalScratchDir():
   if 'FLAGS_task_data_dir' in os.environ:
-    working_dir = os.environ(['FLAGS_task_data_dir'])
+    working_dir = os.environ['FLAGS_task_data_dir']
     if not os.path.exists(working_dir):
       os.makedirs(working_dir)
   else:
