@@ -6,6 +6,18 @@ import tempfile
 from kazoo.client import KazooClient
 from kazoo.exceptions import NodeExistsError
 
+def createLocalScratchDir():
+  if 'FLAGS_task_data_dir' in os.environ:
+    working_dir = os.environ(['FLAGS_task_data_dir'])
+    if not os.path.exists(working_dir):
+      os.makedirs(working_dir)
+  else:
+    working_dir = tempfile.mkdtemp(dir="/mnt/scratch/")
+    print "Working dir is: %s" % (working_dir)
+    os.chmod(working_dir, 0777)
+  return working_dir
+
+
 def zkConnect(conn_str):
   zk = KazooClient(hosts=conn_str)
   zk.start()
@@ -61,15 +73,8 @@ while not done:
     done = True
   time.sleep(1)
 
+working_dir = createLocalScratchDir()
 # get config file in place
-if 'FLAGS_task_data_dir' in os.environ:
-  working_dir = os.environ(['FLAGS_task_data_dir'])
-  if not os.path.exists(working_dir):
-    os.makedirs(working_dir)
-else:
-  working_dir = tempfile.mkdtemp(dir="/mnt/scratch/")
-  print "Working dir is: %s" % (working_dir)
-  os.chmod(working_dir, 0666)
 os.mkdir("%s/html" % (working_dir))
 shutil.copyfile("/home/srguser/firmament-experiments/workloads/nginx/nginx.conf", "%s/nginx.conf" % (working_dir))
 shutil.copyfile("/home/srguser/firmament-experiments/workloads/nginx/index.html", "%s/html/index.html" % (working_dir))
