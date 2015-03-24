@@ -4,6 +4,7 @@ import netifaces as ni
 import tempfile
 from hdfs import *
 from kazoo.client import KazooClient
+from kazoo.exceptions import NodeExistsError
 
 def createLocalScratchDir():
   if 'FLAGS_task_data_dir' in os.environ:
