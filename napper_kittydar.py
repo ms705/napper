@@ -23,7 +23,7 @@ job_name = sys.argv[1]
 worker_id = int(sys.argv[2])
 kittydar_path = " ".join(sys.argv[3:])
 
-working_dir = createLocalScratchDir():
+working_dir = createLocalScratchDir()
 # fetch inputs from HDFS if necessary
 hdfs_fetch_file("/input/kittydar_splits30/CAT_%02d" % (worker_id), working_dir)
 
