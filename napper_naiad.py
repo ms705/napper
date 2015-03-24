@@ -97,7 +97,7 @@ elif "pagerank" in job_name:
 elif "sssp" in job_name:
   hdfs_fetch_file("/input/sssp_tw_edges_splits%d/sssp_tw_edges%d.in" % (num_workers, worker_id), task_data_dir)
   hdfs_fetch_file("/input/sssp_tw_vertices_splits%d/sssp_tw_vertices%d.in" % (num_workers, worker_id), task_data_dir)
-  naiad_path += "tw %s" % (task_data_dir)
+  naiad_path += " tw %s" % (task_data_dir)
 elif "join" in job_name:
   hdfs_fetch_file("/input/join_right_splits%d/join_right%d.in" % (num_workers, worker_id), task_data_dir)
   hdfs_fetch_file("/input/join_left_splits%d/join_left%d.in" % (num_workers, worker_id), task_data_dir)
