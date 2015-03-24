@@ -60,7 +60,7 @@ while not done:
   time.sleep(1)
 
 # execute program
-command = "%s -m 1024 -p %d" % (memcached_path, actual_port)
+command = "%s -m 4096 -p %d" % (memcached_path, actual_port)
 print "RUNNING: %s" % (command)
 subprocess.call(shlex.split(command))
 
